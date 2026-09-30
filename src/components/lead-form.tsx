@@ -2,9 +2,9 @@
 
 import { FormEvent, useState } from "react";
 
-type LeadFormProps = { formId: string; title: string; buttonText: string; onSuccess?: () => void };
+type LeadFormProps = { formId: string; title: string; buttonText: string; onSuccess?: () => void; className?: string };
 
-export function LeadForm({ formId, title, buttonText, onSuccess }: LeadFormProps) {
+export function LeadForm({ formId, title, buttonText, onSuccess, className = "" }: LeadFormProps) {
   const [status, setStatus] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -27,7 +27,7 @@ export function LeadForm({ formId, title, buttonText, onSuccess }: LeadFormProps
   }
 
   return (
-    <form className="lead-form _flex _flex-column _flex-cross-center _flex-items-center" onSubmit={submit}>
+    <form className={`lead-form _flex _flex-column _flex-cross-center _flex-items-center ${className}`.trim()} onSubmit={submit}>
       <input type="hidden" name="formId" value={formId} />
       {title && <h2 className="lead-form__title _mb-32 _text-center">{title}</h2>}
       <label className="_sr-only" htmlFor={`${formId}-name`}>Имя</label>
