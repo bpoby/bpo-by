@@ -4,6 +4,8 @@ import { LeadForm } from "@/components/lead-form";
 import { ContactBranches } from "@/components/contact-branches";
 import { PhraseSlider } from "@/components/phrase-slider";
 import { ServiceCarousel } from "@/components/service-carousel";
+import { ServiceTabs } from "@/components/service-tabs";
+import serviceReference from "@/data/service-reference.json";
 
 const currentHomeServices = [
   ["/uslugi/inventarizaciya-tovarnyh-zapasov", "Инвентаризация ТМЦ", "/assets/images/services/pear.png"],
@@ -132,14 +134,44 @@ function ListingPage({ title, breadcrumbTitle, items }: { title: string; breadcr
 }
 
 function ServicePage({ page }: { page: LegacyPage }) {
-  const children = childPages(page);
   const steps = multiTv(page, "order_of_work");
-  return <><PageHeading title={page.title} />
-    <section className="about-service _py-48"><div className="container grid"><article className="col col_lg-8 col_lg-offset-2">
-      {page.content ? <LegacyHtml value={page.content} /> : <p>{page.tvs.desc || page.description}</p>}
-      {steps.length > 0 && <ul className="order-of-work__list list _bg-white _mt-32">{steps.map((item, index) => <li className="list__item item grid grid_no-gutters _flex _flex-cross-center _flex-items-center _py-16 _xs-py-24" key={`${item.heading}-${index}`}><span className="item__number col _h2 _font-medium _pl-16">0{index + 1}</span><span className="col col_auto _px-16">{item.heading}</span></li>)}</ul>}
-      {children.length > 0 && <nav className="service-tabs _mt-32" aria-label="Подробнее об услуге">{children.map((child) => <Link className="btn btn_clean btn_light-blue _mr-16 _mb-16" href={child.path} key={child.path}>{child.title}</Link>)}</nav>}
-    </article></div></section><Consultation title="Заказать инвентаризацию" buttonText="Получить бесплатную консультацию" />
+  const reference = (serviceReference as Record<string, { title: string; icon: string; introHtml: string; tabs: { id: string; label: string; html: string }[] }>)[page.path];
+  const title = reference?.title || page.title;
+  const icon = reference?.icon || assetPath(page.tvs.icon);
+
+  return <>
+    <section className="jumbotron jumbotron_simple service-page-heading _bg-white">
+      <div className="container grid"><div className="col col_lg-10 col_lg-offset-1">
+        <nav className="breadcrumbs legacy-breadcrumbs" aria-label="Хлебные крошки">
+          <Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href="/uslugi">Услуги</Link><span aria-hidden="true">/</span><span aria-current="page">{title}</span>
+        </nav>
+        <div className="grid service-page-heading__title">
+          <h1 className="col col_9 col_sm-6 col_md-5 col_lg-4 _mb-0">{title}</h1>
+          {icon && <div className="col col_3 col_sm-2"><img className="_img-fluid _lg-compensate-mt-96" src={assetPath(icon)} alt="" /></div>}
+        </div>
+      </div></div>
+    </section>
+    <ServiceTabs tabs={reference?.tabs || []} introHtml={reference?.introHtml || ""} />
+    <section className="order-of-work service-page-order _pt-24 _xs-pt-32 _sm-pt-48 _md-pt-56">
+      <div className="container grid"><div className="col col_lg-10 _mx-auto">
+        <h2 className="order-of-work__heading _text-center _mb-24 _xs-mb-32 _sm-mb-48 _md-mb-56">Порядок работ</h2>
+        <ul className="order-of-work__list list _bg-white _compensate-half-gutters-x _xs-mx-0 _sm-compensate-mb-56">
+          {steps.map((step, index) => <li className="list__item item grid grid_no-gutters _flex _flex-cross-center _flex-items-center _py-16 _xs-py-24 _sm-py-32 _md-py-40" key={step.heading + index}><div className="item__number col _h2 _font-medium _pl-16 _xs-pl-24 _sm-pl-32 _md-pl-44">0{index + 1}</div><div className="col col_auto col_md-offset-1 _px-16">{step.heading}</div></li>)}
+        </ul>
+      </div></div>
+    </section>
+    <section id="service-order" className="service-page-lead _bg-light-blue _pt-32 _xs-pt-48 _sm-pt-64 _md-pt-96 _lg-pt-128 _pb-48 _xs-pb-56 _sm-pt-72 _md-pb-96 _lg-pb-112">
+      <div className="container grid"><div className="col col_sm-8 col_md-6 col_lg-4 _mx-auto _text-white"><LeadForm formId="order" title="" buttonText="Получить бесплатную консультацию" /></div></div>
+    </section>
+    <div className="service-other-services _pt-32 _mb-72"><div className="container grid"><div className="col col_lg-10 _mx-auto bpo-square _text-white">
+      <div className="bpo-square__content _px-32 _xs-px-48 _sm-px-56 _md-px-64 _lg-px-72 _py-24 _py-64">
+        <h2 className="_font-light _mb-8">Другие услуги</h2>
+        <div className="grid">{currentHomeServices.filter(([path]) => path !== page.path).map(([path, name], index) => <div className="col col_md-6 _my-16 _xs-my-24 _sm-my-32" key={path}>
+          <div className="_h2 _text-white-transparent _font-light">0{index + 1}</div>
+          <div><Link href={path} style={{ textDecoration: "none", color: "white" }}>{name}</Link></div>
+        </div>)}</div>
+      </div>
+    </div></div></div>
   </>;
 }
 
@@ -171,6 +203,7 @@ function ClientsPage() {
         <hr className="preview__cover _cover" style={{ backgroundImage: `url('${assetPath(client.tvs.cover)}')` }} />
       </Link>)}
     </section>
+    <Consultation title="Заказать инвентаризацию" buttonText="Получить бесплатную консультацию" />
   </>;
 }
 
@@ -279,7 +312,8 @@ function ContentPage({ page }: { page: LegacyPage }) {
 }
 
 function LegacyHtml({ value }: { value: string }) {
-  return <div className="legacy-richtext" dangerouslySetInnerHTML={{ __html: value }} />;
+  const html = value.replace(/\\r\\n|\\r|\\n/g, "\n");
+  return <div className="legacy-richtext" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 function PageHeading({ title, breadcrumbTitle = title, variant = "" }: { title: string; breadcrumbTitle?: string; variant?: string }) {
