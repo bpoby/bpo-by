@@ -1,0 +1,62 @@
+.page-404 {
+    text-align: center;
+    margin: 40px 0 40px;
+}
+
+.page-404 svg {
+    margin-bottom: 30px;
+    fill: #18368e;
+    max-width: 100%;
+}
+
+.page-404 .content p {
+    margin: 0;
+}
+
+.page-404 .content .button {
+    margin-top: 20px;
+}
+
+@media (min-width: 480px) {
+    .page-404 .content .button a:first-child {
+        margin-right:20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-404 .content .button a {
+        margin:0 auto 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-404 .content .button {
+        display:flex;
+        flex-direction: column;
+    }
+}
+
+
+.sitemap-menu ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.sitemap-menu li {
+    padding: 2px 0;
+}
+
+.sitemap-menu > ul > li > a {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+.sitemap-menu li > a {
+    color: #636363;
+    text-decoration: underline;
+}
+
+.sitemap-menu li > a:hover {
+    text-decoration: none;
+}

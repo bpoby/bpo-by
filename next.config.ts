@@ -1,0 +1,12 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  trailingSlash: false,
+  allowedDevOrigins: ["127.0.0.1"],
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+  },
+};
+
+export default nextConfig;
