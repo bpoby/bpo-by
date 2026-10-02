@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LeadModal } from "@/components/lead-modal";
 
 const navigation = [
@@ -15,6 +15,14 @@ const navigation = [
 export function Header() {
   const [modal, setModal] = useState<"request-call" | "find-cost" | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setHasScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
@@ -60,7 +68,7 @@ export function Header() {
         <span className="inner" />
       </button>
       <button
-        className={`mobile-nav-cover _md-none${mobileMenuOpen ? " mobile-nav-cover_mobile-nav-visible" : ""}`}
+        className={`mobile-nav-cover _md-none${hasScrolled ? " mobile-nav-cover_scrolled" : ""}${mobileMenuOpen ? " mobile-nav-cover_mobile-nav-visible" : ""}`}
         type="button"
         aria-hidden="true"
         tabIndex={-1}
