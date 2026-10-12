@@ -24,6 +24,9 @@ export async function sendLead(lead: LeadMessage) {
     host,
     port,
     secure: process.env.SMTP_SECURE === "true",
+    connectionTimeout: 8000,
+    greetingTimeout: 8000,
+    socketTimeout: 10000,
     auth: {
       user,
       pass: password,

@@ -25,7 +25,8 @@ export async function POST(request: Request) {
   try {
     await sendLead({ formId: payload.formId, name, tel, email, message });
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("LEAD EMAIL ERROR:", error);
     return NextResponse.json({ ok: false, error: "provider_unavailable" }, { status: 503 });
   }
 }
