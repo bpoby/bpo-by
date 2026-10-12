@@ -75,7 +75,7 @@ function HomePage({ page }: { page: LegacyPage }) {
           <footer className="_mt-32"><Link className="btn btn_clean btn_light-blue btn_icon-right" href="/o-kompanii"><span className="btn__text">Подробнее о компании</span></Link></footer>
         </div>
         <div className="col col_sm-5 col_md-5 col_lg-4 col_lg-offset-1 _none _sm-block">
-          <div className="jumbotron__bpo-square bpo-square"><div className="bpo-square__content swiper-container"><PhraseSlider phrases={phrases.map((item, index) => index === 0 ? "8 лет успешной работы" : item.heading)} /></div></div>
+          <div className="jumbotron__bpo-square bpo-square"><div className="bpo-square__content swiper-container"><PhraseSlider phrases={phrases.map((item, index) => index === 0 ? "12 лет успешной работы" : item.heading)} /></div></div>
         </div>
       </div>
     </section>
@@ -122,11 +122,11 @@ function Advantage({ text }: { text: string }) {
 function ListingPage({ title, breadcrumbTitle, items }: { title: string; breadcrumbTitle: string; items: LegacyPage[] }) {
   const orderedItems = currentHomeServices.reduce<{ item: LegacyPage; title: string; icon: string }[]>((ordered, [path, title, icon]) => {
     const item = items.find((entry) => entry.path === path);
-    if (item) ordered.push({ item, title, icon: item.tvs.icon || icon });
+    if (item) ordered.push({ item, title, icon });
     return ordered;
   }, []);
-  return <><PageHeading title={title} breadcrumbTitle={breadcrumbTitle} variant="page-heading_catalog" /><section className="services-provided services-index _pt-24 _pb-64"><div className="container grid">{orderedItems.map((entry, index) => {
-    return <Link className="col col_sm-6 col_lg-6 services-provided__preview preview preview_service _flex _flex-column _pt-96 _px-32 _pb-32 _bg-white" href={entry.item.path} key={entry.item.path}>
+  return <><PageHeading title={title} breadcrumbTitle={breadcrumbTitle} variant="page-heading_catalog" /><section className="services-provided services-index _pt-24 _pb-64"><div className="container services-index__grid">{orderedItems.map((entry, index) => {
+    return <Link className="services-provided__preview preview preview_service _flex _flex-column _bg-white" href={entry.item.path} key={entry.item.path}>
       <div className="preview__content _flex _flex-column _flex-main-between"><h2 className="preview__heading _text-blue _mb-auto"><span className="underline">{entry.title}</span></h2><span className="preview__number _font-medium _h2">0{index + 1}</span></div>
       <img className="preview__cover _img-fluid" src={assetPath(entry.icon)} alt="" />
     </Link>;
@@ -305,7 +305,7 @@ function ContentPage({ page }: { page: LegacyPage }) {
     {page.content ? <LegacyHtml value={page.content} /> : page.description && <p>{page.description}</p>}
     {page.tvs.desc && !page.content && <p>{page.tvs.desc}</p>}
     {values.length > 0 && <section className={`company-values _mt-48${isCompanyPage ? "" : " company-values_plain"}`}><h2 className="_mb-32">Наши ценности =)</h2><ul className="company-values__list list grid">{values.map((item, index) => <li className="col col_sm-6 company-values__item" key={`${item.heading}-${index}`}><span>0{index + 1}</span><p>{item.heading}</p></li>)}</ul></section>}
-    {companyTeam.length > 0 && <section id={isCompanyPage ? "about-team" : undefined} className="company-team _mt-48"><h2 className="_mb-24">Команда</h2><div className="grid">{companyTeam.map((person, index) => <div className="col col_sm-6 col_lg-4 company-team__person _mb-32" key={`${person.name}-${index}`}><img className="_img-fluid" src={assetPath(person.photo)} alt={person.name} /><h3 className="_mt-16">{person.name}</h3>{person.post && <p>{person.post}</p>}</div>)}</div></section>}
+    {companyTeam.length > 0 && <section id={isCompanyPage ? "about-team" : undefined} className="company-team _mt-48"><h2 className="_mb-24">Команда</h2><div className="company-team__grid">{companyTeam.map((person, index) => <div className="company-team__person" key={`${person.name}-${index}`}><img className="_img-fluid" src={assetPath(person.photo)} alt={person.name} /><h3>{person.name}</h3>{person.post && <p>{person.post}</p>}</div>)}</div></section>}
     {logos.length > 0 && <section className="_mt-48"><h2 className="_mb-24">Клиент</h2><div className="grid">{logos.map((logo, index) => <div className="col col_6 col_xs-4 col_lg-3 _py-16" key={`${logo.photo}-${index}`}><img className="_img-fluid" src={assetPath(logo.photo)} alt={logo.name || ""} /></div>)}</div></section>}
     {!isCompanyPage && children.length > 0 && <nav className="service-tabs _mt-32" aria-label="Разделы">{children.map((child) => <Link className="btn btn_clean btn_light-blue _mr-16 _mb-16" href={child.path} key={child.path}>{child.title}</Link>)}</nav>}
   </article></div></section><Consultation title="Заказать консультацию специалистов" /></>;

@@ -10,14 +10,15 @@ export function LeadForm({ formId, title, buttonText, onSuccess, className = "" 
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setPending(true);
     setStatus("");
-    const fields = Object.fromEntries(new FormData(event.currentTarget).entries());
+    const fields = Object.fromEntries(new FormData(form).entries());
     try {
       const response = await fetch("/api/leads", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...fields, formId }) });
       if (!response.ok) throw new Error("send-failed");
       setStatus("Спасибо! Мы свяжемся с вами.");
-      event.currentTarget.reset();
+      form.reset();
       onSuccess?.();
     } catch {
       setStatus("Не удалось отправить заявку. Пожалуйста, позвоните нам.");
