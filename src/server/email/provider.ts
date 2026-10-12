@@ -1,5 +1,3 @@
-import nodemailer from "nodemailer";
-
 type LeadMessage = {
   formId: string;
   name: string;
@@ -9,42 +7,42 @@ type LeadMessage = {
 };
 
 export async function sendLead(lead: LeadMessage) {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 465);
-  const user = process.env.SMTP_USER;
-  const password = process.env.SMTP_PASSWORD;
-  const from = process.env.MAIL_FROM;
-  const to = process.env.MAIL_TO;
+  const provider = process.env.EMAIL_PROVIDER;
+  const apiKey = process.env.EMAIL_API_KEY;
+  const from = process.env.EMAIL_FROM;
+  const to = process.env.EMAIL_TO;
 
-  if (!host || !user || !password || !from || !to) {
-    throw new Error("SMTP is not configured");
+  if (provider !== "resend") {
+    throw new Error("Email provider is not configured for Resend");
   }
 
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: process.env.SMTP_SECURE === "true",
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 10000,
-    auth: {
-      user,
-      pass: password,
+  if (!apiKey || !from || !to) {
+    throw new Error("Resend email is not configured");
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({
+      from: `BPO.by <${from}>`,
+      to: [to],
+      subject: `Заявка с сайта: ${lead.formId}`,
+      text: [
+        `Имя: ${lead.name}`,
+        `Телефон: ${lead.tel}`,
+        lead.email ? `E-mail: ${lead.email}` : "",
+        lead.message ? `Сообщение: ${lead.message}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      ...(lead.email ? { reply_to: lead.email } : {}),
+    }),
   });
 
-  await transporter.sendMail({
-    from: `"BPO.by" <${from}>`,
-    to,
-    subject: `Заявка с сайта: ${lead.formId}`,
-    text: [
-      `Имя: ${lead.name}`,
-      `Телефон: ${lead.tel}`,
-      lead.email ? `E-mail: ${lead.email}` : "",
-      lead.message ? `Сообщение: ${lead.message}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n"),
-    ...(lead.email ? { replyTo: lead.email } : {}),
-  });
+  if (!response.ok) {
+    throw new Error(`Resend API request failed with status ${response.status}`);
+  }
 }
